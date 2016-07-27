@@ -64,6 +64,7 @@ module Gxapi
     # @return Array [Gxapi::Ostruct]
     def reload_experiments
       Gxapi.cache.delete(CACHE_KEY)
+      @experiments = nil
       self.get_experiments
     end
 

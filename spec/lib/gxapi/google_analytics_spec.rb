@@ -28,12 +28,14 @@ module Gxapi
                     id: "123",
                     name: "exp1",
                     traffic_coverage: 1.0,
+                    status: "RUNNING",
                     variations: []
                   },
                   {
                     id: "234",
                     name: "exp2",
                     traffic_coverage: 1.0,
+                    status: "RUNNING",
                     variations: []
                   }
                 ]
@@ -62,12 +64,14 @@ module Gxapi
                     id: "123",
                     name: "exp1",
                     traffic_coverage: 1.0,
+                    status: "RUNNING",
                     variations: []
                   },
                   {
                     id: "234",
                     name: "exp2",
                     traffic_coverage: 1.0,
+                    status: "RUNNING",
                     variations: []
                   }
                 ]
@@ -98,6 +102,7 @@ module Gxapi
                     id: "234",
                     name: "fakename",
                     traffic_coverage: 1.0,
+                    status: "RUNNING",
                     variations: [
                       {
                         name: "original",
@@ -115,6 +120,7 @@ module Gxapi
                     id: "456",
                     name: "zerocoverage",
                     traffic_coverage: 0.0,
+                    status: "RUNNING",
                     variations: [
                       {
                         name: "original",
@@ -125,6 +131,37 @@ module Gxapi
                         name: "variation1",
                         weight: 0.5,
                         status: "ACTIVE"
+                      }
+                    ]
+                  },
+                  {
+                    id: "678",
+                    name: "notrunning",
+                    traffic_coverage: 1.0,
+                    status: "DISABLED",
+                    variations: [
+                      {
+                        name: "original",
+                        weight: 0.5,
+                        status: "ACTIVE"
+                      }
+                    ]
+                  },
+                  {
+                    id: "890",
+                    name: "varationsdisabled",
+                    traffic_coverage: 1.0,
+                    status: "RUNNING",
+                    variations: [
+                      {
+                        name: "original",
+                        weight: 0.0,
+                        status: "ACTIVE"
+                      },
+                      {
+                        name: "variation1",
+                        weight: 1.0,
+                        status: "INACTIVE"
                       }
                     ]
                   }
@@ -149,6 +186,30 @@ module Gxapi
         )
         expect(variant.name).to eql("default")
         expect(variant.index).to eql(-1)
+      end
+
+      it "returns the default if experiment status in not RUNNING" do
+        variant = subject.get_variant(
+          GxApi::ExperimentIdentifier.new("notrunning")
+        )
+        expect(variant.name).to eql("default")
+        expect(variant.index).to eql(-1)
+      end
+
+      it "returns the default if all other variations are not status ACTIVE" do
+        variant = subject.get_variant(
+          GxApi::ExperimentIdentifier.new("varationsdisabled")
+        )
+        expect(variant.name).to eql("default")
+        expect(variant.index).to eql(-1)
+      end
+
+    end
+
+    context "#run_experiment?" do
+
+      it "returns false if the experiment is nil" do
+        expect(subject.send(:run_experiment?,nil)).to eql false
       end
 
     end

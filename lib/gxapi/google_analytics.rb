@@ -170,6 +170,8 @@ module Gxapi
       # a blank experiment can't run
       return false if experiment.nil?
 
+      return false if experiment.status != "RUNNING"
+
       # get a random value - a 100% coverage is represented
       # as 1.0, so Kernel.rand works for us as its max is
       # 1.0
@@ -197,7 +199,7 @@ module Gxapi
         variation.experiment_id = experiment.id
 
         # add the variation's weight to accum
-        accum += variation.weight
+        accum += variation.weight if variation.status == "ACTIVE"
 
         # return the variation if accum is more than our random value
         if sample <= accum

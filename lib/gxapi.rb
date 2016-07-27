@@ -1,5 +1,5 @@
 require 'active_support'
-require 'celluloid/current'
+require 'celluloid'
 require 'erb'
 require 'json'
 require 'yaml'
